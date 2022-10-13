@@ -21,6 +21,7 @@ function Prompt(question, rl, answers) {
       return true;
     }
   });
+  this.answers = {...answers};
   this.responses = [];
   return this;
 }
@@ -34,7 +35,7 @@ Prompt.prototype.askForLoop = function () {
     type: 'confirm',
     name: 'loop',
     message: (typeof this.opt.message === 'function' ? this.opt.message() : this.opt.message) || 'Would you like to loop ?'
-  }).then(function (result) {
+  },this.answers).then(function (result) {
     if (result.loop) {
       this.askNestedQuestion();
     } else {
@@ -44,7 +45,7 @@ Prompt.prototype.askForLoop = function () {
 }
 
 Prompt.prototype.askNestedQuestion = function () {
-  inquirer.prompt(this.opt.prompts).then(function (result) {
+  inquirer.prompt(this.opt.prompts, this.answers).then(function (result) {
     this.responses.push(result);
     this.askForLoop();
   }.bind(this));
